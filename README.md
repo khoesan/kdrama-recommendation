@@ -22,14 +22,11 @@ Banyak penonton K-Drama menghadapi kesulitan dalam menemukan drama baru yang ses
 - Menyediakan rekomendasi top-5 drama yang relevan dan berkualitas tinggi.
 
 ### Solution Approach
-Dalam proyek ini, terdapat dua pendekatan solusi yang dipertimbangkan:
+Dalam proyek ini, pendekatan solusi yang dipertimbangkan adalah:
 
 1. **Content-Based Filtering**  
    Sistem merekomendasikan drama berdasarkan kesamaan konten drama yang sudah disukai pengguna, khususnya menggunakan fitur teks (genre + sinopsis).
-
-2. **Collaborative Filtering (Alternatif untuk Pengembangan Selanjutnya)**  
-   Sistem merekomendasikan drama berdasarkan preferensi pengguna lain yang memiliki selera serupa. Pendekatan ini membutuhkan data interaksi pengguna yang tidak tersedia dalam dataset ini, sehingga menjadi solusi lanjutan.
-
+   
 ---
 
 ## 3. Data Understanding
@@ -198,7 +195,7 @@ Karena proyek ini menggunakan pendekatan content-based tanpa data interaksi peng
 
 ### Formula Skor Similarity Rata-Rata
 
-{Avg Similarity} = \frac{1}{N} \sum_{i=1}^{N} \text{cosine\_similarity}(d_{input}, d_i)
+${Avg Similarity} = \frac{1}{N} \sum_{i=1}^{N} \text{cosine\_similarity}(d_{input}, d_i)$
 
 di mana $d_{input}$ adalah drama yang menjadi input dan $d_i$ adalah drama hasil rekomendasi.
 
