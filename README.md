@@ -8,8 +8,6 @@ Drama Korea (K-Drama) telah menjadi fenomena global dengan jutaan penggemar dari
 
 Proyek ini bertujuan membangun sistem rekomendasi drama Korea menggunakan pendekatan Content-Based Filtering yang memanfaatkan kemiripan konten, khususnya genre dan sinopsis drama. Dengan demikian, sistem dapat merekomendasikan drama yang memiliki karakteristik serupa dengan drama yang disukai pengguna sebelumnya.
 
-Referensi yang mendukung pentingnya sistem rekomendasi ini termasuk studi terkait algoritma content-based filtering yang umum digunakan dalam berbagai platform media (Ricci et al., 2015) serta tren meningkatnya konsumsi K-Drama secara global (Statista, 2023).
-
 ---
 
 ## 2. Business Understanding
@@ -195,7 +193,7 @@ Karena proyek ini menggunakan pendekatan content-based tanpa data interaksi peng
 
 ### Formula Skor Similarity Rata-Rata
 
-${Avg Similarity} = \frac{1}{N} \sum_{i=1}^{N} \text{cosine\_similarity}(d_{input}, d_i)$
+{Avg Similarity} = \frac{1}{N} \sum_{i=1}^{N} \text{cosine\_similarity}(d_{input}, d_i)
 
 di mana $d_{input}$ adalah drama yang menjadi input dan $d_i$ adalah drama hasil rekomendasi.
 
@@ -217,5 +215,3 @@ evaluate_similarity("My Mister")
 Misalnya untuk input "My Mister", sistem menghasilkan rekomendasi drama dengan genre dan rating yang mirip, yang menunjukkan konsistensi dalam menghasilkan rekomendasi relevan secara semantik.
 
 ---
-
-*Laporan ini disusun untuk memenuhi persyaratan submission pada platform Dicoding.*
