@@ -38,16 +38,45 @@ Dataset yang digunakan adalah **Top 250 Korean Dramas** yang tersedia di Kaggle:
 [https://www.kaggle.com/datasets/ahbab911/top-250-korean-dramas-kdrama-dataset](https://www.kaggle.com/datasets/ahbab911/top-250-korean-dramas-kdrama-dataset)
 
 ### Informasi Data
-- **Jumlah data:** 250 drama Korea
-- **Fitur utama:**
-  - `Title`: Judul drama
-  - `Genre`: Genre utama drama (dipisahkan dengan koma)
-  - `Rating`: Nilai rating IMDb drama
-  - `Year`: Tahun rilis drama
-  - `Synopsis`: Sinopsis singkat drama
+
+Dataset ini berisi 250 drama Korea dengan fitur sebagai berikut:
+
+| Nama Variabel           | Deskripsi                                                                                              | Contoh                                      |
+|------------------------|------------------------------------------------------------------------------------------------------|---------------------------------------------|
+| **Name**               | Judul drama                                                                                           | Move to Heaven                              |
+| **Aired Date**         | Tanggal tayang perdana                                                                                | 14-May-21                                   |
+| **Year of release**    | Tahun rilis drama                                                                                      | 2021                                        |
+| **Original Network**   | Jaringan televisi atau platform asli yang menayangkan drama                                          | Netflix                                     |
+| **Aired On**           | Hari tayang drama                                                                                     | Friday                                      |
+| **Number of Episodes** | Jumlah episode drama                                                                                   | 10                                          |
+| **Duration**           | Durasi rata-rata per episode                                                                          | 52 min.                                     |
+| **Content Rating**     | Rating konten, misalnya batas usia dan kategori konten                                               | 18+ Restricted (violence & profanity)       |
+| **Rating**             | Rating skor drama (misalnya IMDb rating)                                                             | 9.2                                         |
+| **Synopsis**           | Sinopsis atau ringkasan cerita drama                                                                 | Geu Roo is a young autistic man...          |
+| **Genre**              | Genre drama (bisa lebih dari satu)                                                                   | Life, Drama, Family                         |
+| **Tags**               | Tag tambahan yang menjelaskan tema dan elemen cerita                                                | Autism, Uncle-Nephew Relationship, Death... |
+| **Director**           | Nama sutradara drama                                                                                  | Kim Sung Ho                                 |
+| **Screenwriter**       | Nama penulis skenario drama                                                                           | Yoon Ji Ryun                                |
+| **Cast**               | Daftar pemeran utama drama                                                                            | Lee Je Hoon, Tang Jun Sang, Hong Seung Hee...|
+| **Production companies** | Perusahaan produksi yang memproduksi drama                                                          | Page One Film, Number Three Pictures        |
+| **Rank**               | Peringkat drama berdasarkan rating atau popularitas                                                | #1                                          |
+
+---
+
+### Statistik dan Distribusi Data
+
+- Total drama: 250 judul.
+- Tahun rilis berkisar dari tahun 2000-an hingga 2021.
+- Rating rata-rata: 7.5 – 9.5, dengan sebagian besar drama memiliki rating tinggi.
+- Durasi rata-rata episode berkisar 50-60 menit.
+- Genre umum: Drama, Romance, Life, Family, Fantasy, Thriller.
+- Content rating bervariasi, termasuk kategori umum dan 18+ Restricted.
+
+---
 
 ### Exploratory Data Analysis (EDA)
-Visualisasi distribusi rating menunjukkan sebagian besar drama memiliki rating tinggi (8.0 – 9.5), menandakan kualitas drama yang baik. Jumlah drama per tahun rilis juga divisuallisasi untuk melihat tren produksi drama dari waktu ke waktu.
+
+Visualisasi distribusi rating dan jumlah drama berdasarkan tahun rilis dapat membantu memahami karakteristik dataset.
 
 ```python
 import matplotlib.pyplot as plt
@@ -63,7 +92,7 @@ plt.show()
 
 # Jumlah drama berdasarkan tahun rilis
 plt.figure(figsize=(8,4))
-sns.countplot(x='Year', data=df, palette='Blues_r')
+sns.countplot(x='Year of release', data=df, palette='Blues_r')
 plt.title('Jumlah Drama Berdasarkan Tahun Rilis')
 plt.xticks(rotation=45)
 plt.ylabel('Jumlah Drama')
@@ -169,9 +198,7 @@ Karena proyek ini menggunakan pendekatan content-based tanpa data interaksi peng
 
 ### Formula Skor Similarity Rata-Rata
 
-$$
-\text{Avg Similarity} = \frac{1}{N} \sum_{i=1}^{N} \text{cosine\_similarity}(d_{input}, d_i)
-$$
+{Avg Similarity} = \frac{1}{N} \sum_{i=1}^{N} \text{cosine\_similarity}(d_{input}, d_i)
 
 di mana $d_{input}$ adalah drama yang menjadi input dan $d_i$ adalah drama hasil rekomendasi.
 
