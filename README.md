@@ -251,10 +251,12 @@ evaluate_precision_recall("My Mister")
 ```
 - Rata-rata skor similarity dari top-5 rekomendasi untuk 'My Mister': 0.1430
 - Precision@5: 0.20, Recall@5: 0.25, F1-Score@5: 0.22
+
 Meskipun nilai metrik ini belum tinggi, sistem sudah mampu memberikan rekomendasi yang secara tematis dan nuansa cerita cukup relevan, seperti munculnya My Unfamiliar Family, Save Me, The World of the Married yang semua drama ini memiliki tema kehidupan, keluarga, atau psikologis, sejalan dengan nuansa "My Mister".
+
 ---
 
-### 8. Impact to Business Understanding
+### Impact to Business Understanding
 
 Sistem rekomendasi ini dikembangkan untuk menjawab permasalahan bahwa banyak penonton K-Drama kesulitan menemukan tontonan baru yang sesuai dengan selera mereka karena terlalu banyak pilihan. Dari sisi ini, sistem sudah **berhasil memenuhi tujuan awal secara dasar**, yaitu memberikan daftar drama yang mirip berdasarkan konten (sinopsis dan genre).
 
