@@ -1,4 +1,4 @@
-## **Sistem Rekomendasi K-Drama dengan Content-Based Filtering**
+## **Sistem Rekomendasi K-Drama dengan Content-Based Filtering - Khoirotun Hisan**
 
 ### 1. Project Overview
 
@@ -57,17 +57,6 @@ Jumlah data: 250 drama
 | **Rank**               | Peringkat drama berdasarkan rating atau popularitas                                                | #1                                          |
 ---
 
-#### Statistik dan Distribusi Data
-
-- Total drama: 250 judul.
-- Tahun rilis berkisar dari tahun 2000-an hingga 2021.
-- Rating rata-rata: 7.5 – 9.5, dengan sebagian besar drama memiliki rating tinggi.
-- Durasi rata-rata episode berkisar 50-60 menit.
-- Genre umum: Drama, Romance, Life, Family, Fantasy, Thriller.
-- Content rating bervariasi, termasuk kategori umum dan 18+ Restricted.
-  
----
-
 ### 4. Univariate Exploratory Data Analysis (EDA)
 
 Visualisasi distribusi rating dan jumlah drama berdasarkan tahun rilis dilakukan untuk memahami sebaran data.
@@ -89,7 +78,14 @@ plt.title('Jumlah Drama Berdasarkan Tahun Rilis')
 plt.xticks(rotation=45)
 plt.ylabel('Jumlah Drama')
 ```
+#### Statistik dan Distribusi Data
 
+- Total drama: 250 judul.
+- Tahun rilis berkisar dari tahun 2000-an hingga 2021.
+- Rating rata-rata: 7.5 – 9.5, dengan sebagian besar drama memiliki rating tinggi.
+- Durasi rata-rata episode berkisar 50-60 menit.
+- Genre umum: Drama, Romance, Life, Family, Fantasy, Thriller.
+- Content rating bervariasi, termasuk kategori umum dan 18+ Restricted.
 ---
 
 ### 5. Data Preparation
@@ -181,7 +177,6 @@ def recommend_drama_count(title, similarity=cosine_sim_count):
 ```python
 recommend_drama("My Mister")
 ```
---
 | No. | Nama Drama               | Rating |
 | --- | ------------------------ | ------ |
 | 1   | Save Me                  | 8.6    |
@@ -193,7 +188,6 @@ recommend_drama("My Mister")
 ```python
 recommend_drama_count("My Mister")
 ```
---
 | No. | Nama Drama           | Rating |
 | --- | -------------------- | ------ |
 | 1   | Memory               | 8.3    |
@@ -255,8 +249,9 @@ def evaluate_precision_recall(title, top_n=5):
 evaluate_similarity("My Mister")
 evaluate_precision_recall("My Mister")
 ```
-Rata-rata skor similarity dari top-5 rekomendasi untuk 'My Mister': 0.1430
-Precision@5: 0.20, Recall@5: 0.25, F1-Score@5: 0.22
+---
+- Rata-rata skor similarity dari top-5 rekomendasi untuk 'My Mister': 0.1430
+- Precision@5: 0.20, Recall@5: 0.25, F1-Score@5: 0.22
 ---
 
 ### 8. Impact to Business Understanding
