@@ -55,7 +55,17 @@ Jumlah data: 250 drama
 | **Cast**               | Daftar pemeran utama drama                                                                            | Lee Je Hoon, Tang Jun Sang, Hong Seung Hee...|
 | **Production companies** | Perusahaan produksi yang memproduksi drama                                                          | Page One Film, Number Three Pictures        |
 | **Rank**               | Peringkat drama berdasarkan rating atau popularitas                                                | #1                                          |
+---
 
+#### Statistik dan Distribusi Data
+
+- Total drama: 250 judul.
+- Tahun rilis berkisar dari tahun 2000-an hingga 2021.
+- Rating rata-rata: 7.5 – 9.5, dengan sebagian besar drama memiliki rating tinggi.
+- Durasi rata-rata episode berkisar 50-60 menit.
+- Genre umum: Drama, Romance, Life, Family, Fantasy, Thriller.
+- Content rating bervariasi, termasuk kategori umum dan 18+ Restricted.
+  
 ---
 
 ### 4. Univariate Exploratory Data Analysis (EDA)
@@ -64,17 +74,20 @@ Visualisasi distribusi rating dan jumlah drama berdasarkan tahun rilis dilakukan
 
 ```python
 # Distribusi rating
-sns.histplot(df['Rating'], bins=20, kde=True)
-plt.title('Distribusi Rating Drama')
+plt.figure(figsize=(8,4))
+sns.histplot(df['Rating'], bins=20, kde=True, color='salmon')
+plt.title('Distribusi Rating Drama Korea')
 plt.xlabel('Rating')
 plt.ylabel('Jumlah Drama')
 ```
 
 ```python
 # Jumlah drama berdasarkan tahun rilis
-sns.countplot(x='Year of release', data=df)
-plt.title('Jumlah Drama per Tahun Rilis')
+plt.figure(figsize=(8,4))
+sns.countplot(x='Year of release', data=df, palette='Blues_r')
+plt.title('Jumlah Drama Berdasarkan Tahun Rilis')
 plt.xticks(rotation=45)
+plt.ylabel('Jumlah Drama')
 ```
 
 ---
@@ -86,15 +99,15 @@ plt.xticks(rotation=45)
 1. **Menghapus duplikat dan missing values**:
 
 ```python
-df_filtered = df[['Title', 'Genre', 'Synopsis', 'Rating']].copy()
-df_filtered.drop_duplicates(subset='Title', inplace=True)
-df_filtered.dropna(subset=['Genre', 'Synopsis'], inplace=True)
+df_filtered = df[['Name', 'Synopsis', 'Genre', 'Rating']].copy()
+df_filtered.drop_duplicates(subset='Name', inplace=True)
+df_filtered.dropna(subset=['Synopsis', 'Genre'], inplace=True)
 ```
 
 2. **Menggabungkan fitur Genre dan Sinopsis menjadi `combined_features`**:
 
 ```python
-df_filtered['combined_features'] = df_filtered['Genre'] + " " + df_filtered['Synopsis']
+df_filtered['combined_features'] = df_filtered['Genre'].fillna('') + " " + df_filtered['Synopsis'].fillna('')
 ```
 
 3. **Ekstraksi Fitur dengan TF-IDF**
@@ -136,33 +149,61 @@ cosine_sim_count = cosine_similarity(count_matrix, count_matrix)
 #### Fungsi Rekomendasi
 
 ```python
-indices = pd.Series(df_filtered.index, index=df_filtered['Title']).drop_duplicates()
+indices = pd.Series(df_filtered.index, index=df_filtered['Name']).drop_duplicates()
 
 def recommend_drama(title, similarity=cosine_sim):
     idx = indices.get(title)
+    if idx is None:
+        return f"Drama '{title}' tidak ditemukan dalam data."
+
     sim_scores = list(enumerate(similarity[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:6]
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:6]
+
     drama_indices = [i[0] for i in sim_scores]
-    return df_filtered[['Title', 'Genre', 'Rating']].iloc[drama_indices]
+    return df_filtered[['Name', 'Rating']].iloc[drama_indices]
 ```
 
 ```python
 def recommend_drama_count(title, similarity=cosine_sim_count):
     idx = indices.get(title)
+    if idx is None:
+        return f"Drama '{title}' tidak ditemukan."
+
     sim_scores = list(enumerate(similarity[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:6]
     drama_indices = [i[0] for i in sim_scores]
-    return df_filtered[['Title', 'Genre', 'Rating']].iloc[drama_indices]
+    return df_filtered[['Name', 'Rating']].iloc[drama_indices]
 ```
 
 #### Contoh Output Rekomendasi
 
 ```python
 recommend_drama("My Mister")
+```
+--
+| No. | Nama Drama               | Rating |
+| --- | ------------------------ | ------ |
+| 1   | Save Me                  | 8.6    |
+| 2   | Blind                    | 8.5    |
+| 3   | My Father is Strange     | 8.6    |
+| 4   | My Unfamiliar Family     | 8.4    |
+| 5   | The World of the Married | 8.5    |
+
+```python
 recommend_drama_count("My Mister")
 ```
+--
+| No. | Nama Drama           | Rating |
+| --- | -------------------- | ------ |
+| 1   | Memory               | 8.3    |
+| 2   | Dear My Friends      | 8.7    |
+| 3   | Children of Nobody   | 8.6    |
+| 4   | My Father is Strange | 8.6    |
+| 5   | My Unfamiliar Family | 8.4    |
 
 ---
+
 
 ### 7. Evaluation
 
@@ -175,11 +216,15 @@ Karena tidak memiliki data eksplisit interaksi pengguna, maka digunakan evaluasi
 Menilai seberapa mirip drama rekomendasi dengan input.
 
 ```python
-def evaluate_similarity(title, similarity=cosine_sim, top_n=5):
+def evaluate_similarity(title, top_n=5):
     idx = indices.get(title)
-    sim_scores = sorted(list(enumerate(similarity[idx])), key=lambda x: x[1], reverse=True)[1:top_n+1]
+    if idx is None:
+        return f"Drama '{title}' tidak ditemukan."
+
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
     avg_score = sum([score for _, score in sim_scores]) / top_n
-    return f"Rata-rata cosine similarity: {avg_score:.4f}"
+    return f"Rata-rata skor similarity dari top-{top_n} rekomendasi untuk '{title}': {avg_score:.4f}"
 ```
 
 ##### B. Precision\@K, Recall\@K, F1-Score\@K (Simulasi)
@@ -210,7 +255,8 @@ def evaluate_precision_recall(title, top_n=5):
 evaluate_similarity("My Mister")
 evaluate_precision_recall("My Mister")
 ```
-
+Rata-rata skor similarity dari top-5 rekomendasi untuk 'My Mister': 0.1430
+Precision@5: 0.20, Recall@5: 0.25, F1-Score@5: 0.22
 ---
 
 ### 8. Impact to Business Understanding
