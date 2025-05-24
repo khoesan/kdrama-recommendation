@@ -251,19 +251,19 @@ evaluate_precision_recall("My Mister")
 ```
 - Rata-rata skor similarity dari top-5 rekomendasi untuk 'My Mister': 0.1430
 - Precision@5: 0.20, Recall@5: 0.25, F1-Score@5: 0.22
+Meskipun nilai metrik ini belum tinggi, sistem sudah mampu memberikan rekomendasi yang secara tematis dan nuansa cerita cukup relevan, seperti munculnya My Unfamiliar Family, Save Me, The World of the Married yang semua drama ini memiliki tema kehidupan, keluarga, atau psikologis, sejalan dengan nuansa "My Mister".
 ---
 
 ### 8. Impact to Business Understanding
 
-#### Apakah masalah bisnis terjawab?
+Sistem rekomendasi ini dikembangkan untuk menjawab permasalahan bahwa banyak penonton K-Drama kesulitan menemukan tontonan baru yang sesuai dengan selera mereka karena terlalu banyak pilihan. Dari sisi ini, sistem sudah **berhasil memenuhi tujuan awal secara dasar**, yaitu memberikan daftar drama yang mirip berdasarkan konten (sinopsis dan genre).
 
-Ya. Sistem rekomendasi berhasil membantu pengguna menemukan drama dengan kemiripan genre dan cerita, mengurangi waktu pencarian.
+Hasil evaluasi kuantitatif memang masih berada pada tingkat rendah–moderat, tetapi sistem sudah mulai menunjukkan **arah kerja yang benar** dan dapat terus dikembangkan. Secara kualitatif, hasil rekomendasi menunjukkan adanya kesamaan tema dan tone yang sesuai dengan drama acuan, yang menjadi bukti bahwa sistem **dapat membantu pengguna menemukan tontonan yang selaras dengan preferensi mereka**.
 
-#### Apakah tujuan proyek tercapai?
+Dari perspektif bisnis, sistem ini sudah mulai dapat:
 
-✔ Memberikan rekomendasi top-5 yang relevan
-✔ Menggunakan pendekatan content-based filtering yang scalable
+- Mengurangi waktu pengguna dalam memilih tontonan.
+- Meningkatkan engagement pengguna terhadap platform karena rekomendasi yang personal.
+- Menjadi fondasi awal untuk sistem rekomendasi yang lebih kompleks ke depannya.
 
-#### Apakah solusi efektif?
-
-Sistem menunjukkan hasil yang baik dalam menyajikan drama dengan tema serupa, memberikan pengalaman yang lebih personal pada pengguna.
+Namun demikian, sistem masih perlu disempurnakan untuk mencapai performa maksimal, terutama dalam meningkatkan relevansi rekomendasi (precision) dan cakupan drama yang sesuai (recall), agar dampaknya terhadap tujuan bisnis lebih optimal.
