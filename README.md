@@ -1,40 +1,40 @@
-# Sistem Rekomendasi K-Drama dengan Content-Based Filtering
+## **Sistem Rekomendasi K-Drama dengan Content-Based Filtering**
 
----
-
-## 1. Project Overview
+### 1. Project Overview
 
 Drama Korea (K-Drama) telah menjadi fenomena global dengan jutaan penggemar dari berbagai negara. Dengan bertambahnya jumlah judul drama, penonton seringkali merasa kesulitan memilih tontonan yang sesuai dengan preferensi mereka. Oleh karena itu, dibutuhkan sistem rekomendasi yang dapat membantu pengguna menemukan drama baru yang relevan berdasarkan selera pribadi mereka.
 
-Proyek ini bertujuan membangun sistem rekomendasi drama Korea menggunakan pendekatan Content-Based Filtering yang memanfaatkan kemiripan konten, khususnya genre dan sinopsis drama. Dengan demikian, sistem dapat merekomendasikan drama yang memiliki karakteristik serupa dengan drama yang disukai pengguna sebelumnya.
+**Tujuan Proyek:**
+
+* Membangun sistem rekomendasi drama Korea menggunakan pendekatan Content-Based Filtering.
+* Memprediksi drama yang relevan berdasarkan sinopsis dan genre dari drama favorit pengguna.
 
 ---
 
-## 2. Business Understanding
+### 2. Business Understanding
 
-### Problem Statement
-Banyak penonton K-Drama menghadapi kesulitan dalam menemukan drama baru yang sesuai dengan preferensi mereka akibat banyaknya pilihan yang tersedia.
+#### Problem Statement
 
-### Goals
-- Membangun sistem rekomendasi yang memberikan daftar drama Korea mirip berdasarkan genre dan sinopsis drama favorit pengguna.
-- Menyediakan rekomendasi top-5 drama yang relevan dan berkualitas tinggi.
+Penonton kesulitan menemukan drama baru yang sesuai dengan selera mereka karena banyaknya pilihan dan kurangnya sistem personalisasi di beberapa platform tontonan.
 
-### Solution Approach
-Dalam proyek ini, pendekatan solusi yang dipertimbangkan adalah:
+#### Goals
 
-1. **Content-Based Filtering**  
-   Sistem merekomendasikan drama berdasarkan kesamaan konten drama yang sudah disukai pengguna, khususnya menggunakan fitur teks (genre + sinopsis).
-   
+* Mengembangkan sistem rekomendasi berbasis konten menggunakan fitur Genre dan Sinopsis.
+* Memberikan Top-5 rekomendasi drama yang serupa dengan drama favorit pengguna.
+
+#### Solution Approach
+
+Sistem rekomendasi ini dikembangkan menggunakan pendekatan **Content-Based Filtering** yang memanfaatkan fitur teks (Genre dan Sinopsis) untuk menemukan kemiripan antar drama.
+
 ---
 
-## 3. Data Understanding
+### 3. Data Understanding
 
-Dataset yang digunakan adalah **Top 250 Korean Dramas** yang tersedia di Kaggle:  
-[https://www.kaggle.com/datasets/ahbab911/top-250-korean-dramas-kdrama-dataset](https://www.kaggle.com/datasets/ahbab911/top-250-korean-dramas-kdrama-dataset)
+#### Dataset
 
-### Informasi Data
-
-Dataset ini berisi 250 drama Korea dengan fitur sebagai berikut:
+Dataset: **Top 250 Korean Dramas**
+Sumber: [Kaggle - ahbab911/top-250-korean-dramas-kdrama-dataset](https://www.kaggle.com/datasets/ahbab911/top-250-korean-dramas-kdrama-dataset)
+Jumlah data: 250 drama
 
 | Nama Variabel           | Deskripsi                                                                                              | Contoh                                      |
 |------------------------|------------------------------------------------------------------------------------------------------|---------------------------------------------|
@@ -58,160 +58,172 @@ Dataset ini berisi 250 drama Korea dengan fitur sebagai berikut:
 
 ---
 
-### Statistik dan Distribusi Data
+### 4. Univariate Exploratory Data Analysis (EDA)
 
-- Total drama: 250 judul.
-- Tahun rilis berkisar dari tahun 2000-an hingga 2021.
-- Rating rata-rata: 7.5 – 9.5, dengan sebagian besar drama memiliki rating tinggi.
-- Durasi rata-rata episode berkisar 50-60 menit.
-- Genre umum: Drama, Romance, Life, Family, Fantasy, Thriller.
-- Content rating bervariasi, termasuk kategori umum dan 18+ Restricted.
-
----
-
-### Exploratory Data Analysis (EDA)
-
-Visualisasi distribusi rating dan jumlah drama berdasarkan tahun rilis dapat membantu memahami karakteristik dataset.
+Visualisasi distribusi rating dan jumlah drama berdasarkan tahun rilis dilakukan untuk memahami sebaran data.
 
 ```python
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 # Distribusi rating
-plt.figure(figsize=(8,4))
-sns.histplot(df['Rating'], bins=20, kde=True, color='salmon')
-plt.title('Distribusi Rating Drama Korea')
+sns.histplot(df['Rating'], bins=20, kde=True)
+plt.title('Distribusi Rating Drama')
 plt.xlabel('Rating')
 plt.ylabel('Jumlah Drama')
-plt.show()
-
-# Jumlah drama berdasarkan tahun rilis
-plt.figure(figsize=(8,4))
-sns.countplot(x='Year of release', data=df, palette='Blues_r')
-plt.title('Jumlah Drama Berdasarkan Tahun Rilis')
-plt.xticks(rotation=45)
-plt.ylabel('Jumlah Drama')
-plt.show()
-````
-
----
-
-## 4. Data Preparation
-
-Untuk membuat sistem rekomendasi berbasis teks, dilakukan langkah-langkah berikut:
-
-* Memilih fitur yang relevan: `Title`, `Synopsis`, `Genre`, dan `Rating`.
-* Menghapus data duplikat berdasarkan `Title`.
-* Mengatasi nilai kosong (null) di kolom `Synopsis` dan `Genre`.
-* Menggabungkan kolom `Genre` dan `Synopsis` menjadi satu fitur teks (`combined_features`) yang akan digunakan dalam perhitungan kemiripan.
-
-```python
-df_filtered = df[['Title', 'Synopsis', 'Genre', 'Rating']].copy()
-df_filtered.drop_duplicates(subset='Title', inplace=True)
-df_filtered.dropna(subset=['Synopsis', 'Genre'], inplace=True)
-df_filtered['combined_features'] = df_filtered['Genre'].fillna('') + " " + df_filtered['Synopsis'].fillna('')
 ```
 
-**Alasan:**
-Penggabungan genre dan sinopsis bertujuan untuk menangkap informasi baik dari kategori genre maupun isi cerita, sehingga sistem dapat mengenali kemiripan secara lebih menyeluruh.
+```python
+# Jumlah drama berdasarkan tahun rilis
+sns.countplot(x='Year of release', data=df)
+plt.title('Jumlah Drama per Tahun Rilis')
+plt.xticks(rotation=45)
+```
 
 ---
 
-## 5. Modeling and Results
+### 5. Data Preparation
 
-### Pendekatan Content-Based Filtering
+#### Langkah-langkah Persiapan:
 
-* Menggunakan **TF-IDF Vectorizer** untuk mengubah teks `combined_features` menjadi representasi numerik.
-* Menghitung **cosine similarity** antar drama untuk mengukur kemiripan konten.
-* Membuat fungsi rekomendasi `recommend_drama(title)` yang mengembalikan 5 drama paling mirip dengan input judul drama.
+1. **Menghapus duplikat dan missing values**:
+
+```python
+df_filtered = df[['Title', 'Genre', 'Synopsis', 'Rating']].copy()
+df_filtered.drop_duplicates(subset='Title', inplace=True)
+df_filtered.dropna(subset=['Genre', 'Synopsis'], inplace=True)
+```
+
+2. **Menggabungkan fitur Genre dan Sinopsis menjadi `combined_features`**:
+
+```python
+df_filtered['combined_features'] = df_filtered['Genre'] + " " + df_filtered['Synopsis']
+```
+
+3. **Ekstraksi Fitur dengan TF-IDF**
+   TF-IDF (Term Frequency–Inverse Document Frequency) digunakan untuk memberi bobot pada kata-kata penting yang membantu sistem memahami konteks cerita:
 
 ```python
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 tfidf = TfidfVectorizer(stop_words='english')
 tfidf_matrix = tfidf.fit_transform(df_filtered['combined_features'])
-
-cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-
-indices = pd.Series(df_filtered.index, index=df_filtered['Title']).drop_duplicates()
-
-def recommend_drama(title, similarity=cosine_sim):
-    idx = indices.get(title)
-    if idx is None:
-        return f"Drama '{title}' tidak ditemukan."
-    sim_scores = list(enumerate(similarity[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:6]
-    drama_indices = [i[0] for i in sim_scores]
-    return df_filtered[['Title', 'Genre', 'Rating']].iloc[drama_indices]
-
-# Contoh rekomendasi
-recommend_drama("My Mister")
 ```
 
-### Alternatif Pendekatan: CountVectorizer
-
-Sebagai pembanding, menggunakan **CountVectorizer** untuk representasi teks yang lebih sederhana.
+4. **(Alternatif) Ekstraksi Fitur dengan CountVectorizer**
+   CountVectorizer memberikan bobot berdasarkan frekuensi kemunculan kata:
 
 ```python
 from sklearn.feature_extraction.text import CountVectorizer
 
 count = CountVectorizer(stop_words='english')
 count_matrix = count.fit_transform(df_filtered['combined_features'])
-cosine_sim_count = cosine_similarity(count_matrix, count_matrix)
+```
 
-def recommend_drama_count(title, similarity=cosine_sim_count):
+---
+
+### 6. Model and Results
+
+#### Pendekatan Content-Based Filtering
+
+* **Prinsip Kerja**: Sistem mencari item serupa berdasarkan fitur konten menggunakan kemiripan vektor teks.
+* **Algoritma**: Cosine Similarity digunakan untuk mengukur sejauh mana dua drama mirip secara semantik.
+
+```python
+from sklearn.metrics.pairwise import cosine_similarity
+
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+cosine_sim_count = cosine_similarity(count_matrix, count_matrix)
+```
+
+#### Fungsi Rekomendasi
+
+```python
+indices = pd.Series(df_filtered.index, index=df_filtered['Title']).drop_duplicates()
+
+def recommend_drama(title, similarity=cosine_sim):
     idx = indices.get(title)
-    if idx is None:
-        return f"Drama '{title}' tidak ditemukan."
     sim_scores = list(enumerate(similarity[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:6]
     drama_indices = [i[0] for i in sim_scores]
     return df_filtered[['Title', 'Genre', 'Rating']].iloc[drama_indices]
+```
 
-# Contoh rekomendasi
+```python
+def recommend_drama_count(title, similarity=cosine_sim_count):
+    idx = indices.get(title)
+    sim_scores = list(enumerate(similarity[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:6]
+    drama_indices = [i[0] for i in sim_scores]
+    return df_filtered[['Title', 'Genre', 'Rating']].iloc[drama_indices]
+```
+
+#### Contoh Output Rekomendasi
+
+```python
+recommend_drama("My Mister")
 recommend_drama_count("My Mister")
 ```
 
-### Kelebihan dan Kekurangan
-
-| Pendekatan      | Kelebihan                                                 | Kekurangan                                                              |
-| --------------- | --------------------------------------------------------- | ----------------------------------------------------------------------- |
-| TF-IDF          | Menangkap nuansa semantik, meminimalisasi bobot kata umum | Lebih kompleks, membutuhkan tuning parameter                            |
-| CountVectorizer | Sederhana dan mudah dipahami                              | Bias terhadap kata yang sering muncul, kurang sensitif terhadap konteks |
-
 ---
 
-## 6. Evaluation
+### 7. Evaluation
 
-### Metrik Evaluasi
+#### Metrik Evaluasi
 
-Karena proyek ini menggunakan pendekatan content-based tanpa data interaksi pengguna, evaluasi dilakukan dengan:
+Karena tidak memiliki data eksplisit interaksi pengguna, maka digunakan evaluasi berikut:
 
-* **Skor cosine similarity rata-rata** dari top-N rekomendasi untuk tiap judul drama.
-* **Evaluasi kualitatif** dengan melihat kesamaan genre dan tema drama yang direkomendasikan.
+##### A. Cosine Similarity Score
 
-### Formula Skor Similarity Rata-Rata
-
-{Avg Similarity} = \frac{1}{N} \sum_{i=1}^{N} \text{cosine\_similarity}(d_{input}, d_i)
-
-di mana $d_{input}$ adalah drama yang menjadi input dan $d_i$ adalah drama hasil rekomendasi.
+Menilai seberapa mirip drama rekomendasi dengan input.
 
 ```python
-def evaluate_similarity(title, top_n=5):
+def evaluate_similarity(title, similarity=cosine_sim, top_n=5):
     idx = indices.get(title)
-    if idx is None:
-        return f"Drama '{title}' tidak ditemukan."
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
+    sim_scores = sorted(list(enumerate(similarity[idx])), key=lambda x: x[1], reverse=True)[1:top_n+1]
     avg_score = sum([score for _, score in sim_scores]) / top_n
-    return f"Rata-rata skor similarity dari top-{top_n} rekomendasi untuk '{title}': {avg_score:.4f}"
-
-evaluate_similarity("My Mister")
+    return f"Rata-rata cosine similarity: {avg_score:.4f}"
 ```
 
-### Hasil dan Insight
+##### B. Precision\@K, Recall\@K, F1-Score\@K (Simulasi)
 
-Misalnya untuk input "My Mister", sistem menghasilkan rekomendasi drama dengan genre dan rating yang mirip, yang menunjukkan konsistensi dalam menghasilkan rekomendasi relevan secara semantik.
+Karena tidak ada data relevansi eksplisit, dibuat asumsi sederhana:
+
+* Jika genre drama rekomendasi mengandung genre dari drama input, maka dianggap relevan.
+
+```python
+def evaluate_precision_recall(title, top_n=5):
+    idx = indices.get(title)
+    input_genres = set(df_filtered.loc[idx, 'Genre'].split(", "))
+    sim_scores = sorted(list(enumerate(cosine_sim[idx])), key=lambda x: x[1], reverse=True)[1:top_n+1]
+    relevant = 0
+    for i, _ in sim_scores:
+        genres = set(df_filtered.iloc[i]['Genre'].split(", "))
+        if input_genres & genres:
+            relevant += 1
+    precision = relevant / top_n
+    recall = relevant / len(input_genres) if input_genres else 0
+    f1 = 2 * (precision * recall) / (precision + recall + 1e-8)
+    return f"Precision@{top_n}: {precision:.2f}, Recall@{top_n}: {recall:.2f}, F1-Score@{top_n}: {f1:.2f}"
+```
+
+#### Hasil Evaluasi
+
+```python
+evaluate_similarity("My Mister")
+evaluate_precision_recall("My Mister")
+```
 
 ---
+
+### 8. Impact to Business Understanding
+
+#### Apakah masalah bisnis terjawab?
+
+Ya. Sistem rekomendasi berhasil membantu pengguna menemukan drama dengan kemiripan genre dan cerita, mengurangi waktu pencarian.
+
+#### Apakah tujuan proyek tercapai?
+
+✔ Memberikan rekomendasi top-5 yang relevan
+✔ Menggunakan pendekatan content-based filtering yang scalable
+
+#### Apakah solusi efektif?
+
+Sistem menunjukkan hasil yang baik dalam menyajikan drama dengan tema serupa, memberikan pengalaman yang lebih personal pada pengguna.
