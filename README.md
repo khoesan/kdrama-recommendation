@@ -32,9 +32,9 @@ Sistem rekomendasi ini dikembangkan menggunakan pendekatan **Content-Based Filte
 
 #### Dataset
 
-Dataset: **Top 250 Korean Dramas**
-Sumber: [Kaggle - ahbab911/top-250-korean-dramas-kdrama-dataset](https://www.kaggle.com/datasets/ahbab911/top-250-korean-dramas-kdrama-dataset)
-Jumlah data: 250 drama
+- Dataset: **Top 250 Korean Dramas**
+- Sumber: [Kaggle - ahbab911/top-250-korean-dramas-kdrama-dataset](https://www.kaggle.com/datasets/ahbab911/top-250-korean-dramas-kdrama-dataset)
+- Jumlah data: 250 drama
 
 | Nama Variabel           | Deskripsi                                                                                              | Contoh                                      |
 |------------------------|------------------------------------------------------------------------------------------------------|---------------------------------------------|
@@ -249,7 +249,6 @@ def evaluate_precision_recall(title, top_n=5):
 evaluate_similarity("My Mister")
 evaluate_precision_recall("My Mister")
 ```
----
 - Rata-rata skor similarity dari top-5 rekomendasi untuk 'My Mister': 0.1430
 - Precision@5: 0.20, Recall@5: 0.25, F1-Score@5: 0.22
 ---
