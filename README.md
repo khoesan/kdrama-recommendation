@@ -201,71 +201,89 @@ recommend_drama_count("My Mister")
 
 ### 7. Evaluation
 
-#### Metrik Evaluasi
+#### Metrik Evaluasi yang Digunakan
 
-Karena tidak memiliki data eksplisit interaksi pengguna, maka digunakan evaluasi berikut:
+Dalam sistem rekomendasi berbasis **Content-Based Filtering**, sistem bekerja dengan mencari item lain yang memiliki karakteristik (fitur) serupa dengan item yang disukai pengguna. Oleh karena itu, **evaluasi dilakukan berdasarkan relevansi hasil rekomendasi**, bukan berdasarkan perbandingan prediksi dan label seperti pada supervised learning.
 
-##### A. Cosine Similarity Score
+Salah satu metrik yang umum dan **paling relevan** digunakan dalam konteks ini adalah:
 
-Menilai seberapa mirip drama rekomendasi dengan input.
+> **Precision at K**
+> Metrik ini mengukur **seberapa banyak dari k item yang direkomendasikan benar-benar relevan bagi pengguna**.
 
-```python
-def evaluate_similarity(title, top_n=5):
-    idx = indices.get(title)
-    if idx is None:
-        return f"Drama '{title}' tidak ditemukan."
+---
 
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
-    avg_score = sum([score for _, score in sim_scores]) / top_n
-    return f"Rata-rata skor similarity dari top-{top_n} rekomendasi untuk '{title}': {avg_score:.4f}"
+#### Cara Menghitung Precision
+
+Karena sistem rekomendasi tidak memiliki data label eksplisit, maka penilaian relevansi dilakukan berdasarkan **kesamaan genre** antara drama referensi dan drama hasil rekomendasi. Jika setidaknya satu genre sama, maka drama tersebut dianggap **relevan**.
+
+Formula:
+
+```
+Precision at K = (Jumlah item yang relevan) / (Jumlah total item yang direkomendasikan)
 ```
 
-##### B. Precision\@K, Recall\@K, F1-Score\@K (Simulasi)
+Dalam proyek ini digunakan:
 
-Karena tidak ada data relevansi eksplisit, dibuat asumsi sederhana:
+* **k = 5** (Top-5 rekomendasi)
+* Kriteria relevan: minimal 1 genre yang sama dengan drama referensi
 
-* Jika genre drama rekomendasi mengandung genre dari drama input, maka dianggap relevan.
+---
 
-```python
-def evaluate_precision_recall(title, top_n=5):
-    idx = indices.get(title)
-    input_genres = set(df_filtered.loc[idx, 'Genre'].split(", "))
-    sim_scores = sorted(list(enumerate(cosine_sim[idx])), key=lambda x: x[1], reverse=True)[1:top_n+1]
-    relevant = 0
-    for i, _ in sim_scores:
-        genres = set(df_filtered.iloc[i]['Genre'].split(", "))
-        if input_genres & genres:
-            relevant += 1
-    precision = relevant / top_n
-    recall = relevant / len(input_genres) if input_genres else 0
-    f1 = 2 * (precision * recall) / (precision + recall + 1e-8)
-    return f"Precision@{top_n}: {precision:.2f}, Recall@{top_n}: {recall:.2f}, F1-Score@{top_n}: {f1:.2f}"
-```
+#### Drama Referensi: **My Mister**
 
-#### Hasil Evaluasi
+**Genre**: Psychological, Life, Drama, Family
 
-```python
-evaluate_similarity("My Mister")
-evaluate_precision_recall("My Mister")
-```
-- Rata-rata skor similarity dari top-5 rekomendasi untuk 'My Mister': 0.1430
-- Precision@5: 0.20, Recall@5: 0.25, F1-Score@5: 0.22
+Untuk meningkatkan ketepatan relevansi, genre yang terlalu umum seperti "Drama" dikecualikan dari penilaian. Hal ini dilakukan untuk memastikan sistem benar-benar menangkap kedekatan yang lebih dalam preferensi pengguna.
 
-Meskipun nilai metrik ini belum tinggi, sistem sudah mampu memberikan rekomendasi yang secara tematis dan nuansa cerita cukup relevan, seperti munculnya My Unfamiliar Family, Save Me, The World of the Married yang semua drama ini memiliki tema kehidupan, keluarga, atau psikologis, sejalan dengan nuansa "My Mister".
+---
+
+#### 1. Ekstraksi Fitur dengan **TF-IDF**
+
+**Top-5 Rekomendasi:**
+
+1. Save Me → Action, Thriller, Mystery, Drama
+2. Blind → Thriller, Mystery, Drama
+3. My Father is Strange → Comedy, Romance, Drama, **Family**
+4. My Unfamiliar Family → **Life**, Drama
+5. The World of The Married → Thriller, Romance, Drama, Melodrama
+
+**Jumlah item relevan**: 2 dari 5
+
+**Precision\@5** = 2 / 5 = **0.40**
+
+---
+
+#### 2. Ekstraksi Fitur dengan **CountVectorizer**
+
+**Top-5 Rekomendasi:**
+
+1. Memory → Law, Romance, **Life**, Drama
+2. Dear My Friends → **Life**, Drama, **Family**, Melodrama
+3. Children of Nobody → Thriller, Mystery, **Psychological**, Crime, Drama
+4. My Father is Strange → Comedy, Romance, Drama, **Family**
+5. My Unfamiliar Family → **Life**, Drama
+
+**Jumlah item relevan**: 5 dari 5
+
+**Precision\@5** = 5 / 5 = **1.00**
+
+---
+
+#### Ringkasan Hasil Evaluasi
+
+| Skema Ekstraksi Fitur | Precision\@5 |
+| --------------------- | ------------ |
+| TF-IDF                | **0.40**     |
+| CountVectorizer       | **1.00**     |
 
 ---
 
 ### Impact to Business Understanding
 
-Sistem rekomendasi ini dikembangkan untuk menjawab permasalahan bahwa banyak penonton K-Drama kesulitan menemukan tontonan baru yang sesuai dengan selera mereka karena terlalu banyak pilihan. Dari sisi ini, sistem sudah **berhasil memenuhi tujuan awal secara dasar**, yaitu memberikan daftar drama yang mirip berdasarkan konten (sinopsis dan genre).
+Evaluasi menunjukkan bahwa sistem rekomendasi mampu memberikan **hasil yang relevan dan sesuai preferensi pengguna**, dibuktikan dengan precision 100% pada ekstraksi fitur dengan CountVectorizer. Hal ini berdampak positif terhadap pemahaman masalah bisnis karena:
 
-Hasil evaluasi kuantitatif memang masih berada pada tingkat rendah–moderat, tetapi sistem sudah mulai menunjukkan **arah kerja yang benar** dan dapat terus dikembangkan. Secara kualitatif, hasil rekomendasi menunjukkan adanya kesamaan tema dan tone yang sesuai dengan drama acuan, yang menjadi bukti bahwa sistem **dapat membantu pengguna menemukan tontonan yang selaras dengan preferensi mereka**.
+* **Meningkatkan kepuasan pengguna**, dengan memberikan rekomendasi tontonan yang sesuai selera.
+* **Mengurangi beban eksplorasi manual**, karena sistem secara otomatis menyarankan tontonan yang relevan.
+* **Mendukung loyalitas dan retensi pengguna**, karena pengalaman personalisasi membuat pengguna cenderung kembali menggunakan layanan.
 
-Dari perspektif bisnis, sistem ini sudah mulai dapat:
-
-- Mengurangi waktu pengguna dalam memilih tontonan.
-- Meningkatkan engagement pengguna terhadap platform karena rekomendasi yang personal.
-- Menjadi fondasi awal untuk sistem rekomendasi yang lebih kompleks ke depannya.
-
-Namun demikian, sistem masih perlu disempurnakan untuk mencapai performa maksimal, terutama dalam meningkatkan relevansi rekomendasi (precision) dan cakupan drama yang sesuai (recall), agar dampaknya terhadap tujuan bisnis lebih optimal.
+Dengan demikian, sistem ini sudah berada pada arah yang tepat dalam menjawab kebutuhan pengguna maupun mendukung tujuan bisnis yang ingin dicapai.
