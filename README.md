@@ -55,6 +55,20 @@ Sistem rekomendasi ini dikembangkan menggunakan pendekatan **Content-Based Filte
 | **Cast**               | Daftar pemeran utama drama                                                                            | Lee Je Hoon, Tang Jun Sang, Hong Seung Hee...|
 | **Production companies** | Perusahaan produksi yang memproduksi drama                                                          | Page One Film, Number Three Pictures        |
 | **Rank**               | Peringkat drama berdasarkan rating atau popularitas                                                | #1                                          |
+
+Sebelum dilakukan preprocessing, data memiliki beberapa missing value yang perlu diperhatikan. Berikut adalah ringkasan jumlah missing value pada beberapa kolom penting:
+
+| Kolom                  | Jumlah Missing Value |
+|------------------------|----------------------|
+| Content Rating         | 5                    |
+| Director               | 1                    |
+| Screenwriter           | 1                    |
+| Production companies   | 2                    |
+
+Data juga diperiksa terhadap duplikasi dan outlier:
+- **Data Duplikat:** Tidak ditemukan baris yang benar-benar duplikat, khususnya pada kolom Name.
+- **Outlier:** Karena sistem rekomendasi ini berbasis teks (genre dan sinopsis), deteksi outlier numerik tidak menjadi fokus utama. Namun, rating rata-rata diamati berada dalam rentang wajar.
+
 ---
 
 ### 4. Univariate Exploratory Data Analysis (EDA)
@@ -233,23 +247,21 @@ Dalam proyek ini digunakan:
 
 **Genre**: Psychological, Life, Drama, Family
 
-Untuk meningkatkan ketepatan relevansi, genre yang terlalu umum seperti "Drama" dikecualikan dari penilaian. Hal ini dilakukan untuk memastikan sistem benar-benar menangkap kedekatan yang lebih dalam preferensi pengguna.
-
 ---
 
 #### 1. Ekstraksi Fitur dengan **TF-IDF**
 
 **Top-5 Rekomendasi:**
 
-1. Save Me → Action, Thriller, Mystery, Drama
-2. Blind → Thriller, Mystery, Drama
-3. My Father is Strange → Comedy, Romance, Drama, **Family**
-4. My Unfamiliar Family → **Life**, Drama
-5. The World of The Married → Thriller, Romance, Drama, Melodrama
+1. Save Me → Action, Thriller, Mystery, **Drama**
+2. Blind → Thriller, Mystery, **Drama**
+3. My Father is Strange → Comedy, Romance, **Drama**, **Family**
+4. My Unfamiliar Family → **Life**, **Drama**
+5. The World of The Married → Thriller, Romance, **Drama**, Melodrama
 
-**Jumlah item relevan**: 2 dari 5
+**Jumlah item relevan**: 5 dari 5
 
-**Precision\@5** = 2 / 5 = **0.40**
+**Precision\@5** = 5 / 5 = **1.00**
 
 ---
 
@@ -257,11 +269,11 @@ Untuk meningkatkan ketepatan relevansi, genre yang terlalu umum seperti "Drama" 
 
 **Top-5 Rekomendasi:**
 
-1. Memory → Law, Romance, **Life**, Drama
-2. Dear My Friends → **Life**, Drama, **Family**, Melodrama
-3. Children of Nobody → Thriller, Mystery, **Psychological**, Crime, Drama
-4. My Father is Strange → Comedy, Romance, Drama, **Family**
-5. My Unfamiliar Family → **Life**, Drama
+1. Memory → Law, Romance, **Life**, **Drama**
+2. Dear My Friends → **Life**, **Drama**, **Family**, Melodrama
+3. Children of Nobody → Thriller, Mystery, **Psychological**, Crime, **Drama**
+4. My Father is Strange → Comedy, Romance, **Drama**, **Family**
+5. My Unfamiliar Family → **Life**, **Drama**
 
 **Jumlah item relevan**: 5 dari 5
 
@@ -273,14 +285,14 @@ Untuk meningkatkan ketepatan relevansi, genre yang terlalu umum seperti "Drama" 
 
 | Skema Ekstraksi Fitur | Precision\@5 |
 | --------------------- | ------------ |
-| TF-IDF                | **0.40**     |
+| TF-IDF                | **1.00**     |
 | CountVectorizer       | **1.00**     |
 
 ---
 
 ### Impact to Business Understanding
 
-Evaluasi menunjukkan bahwa sistem rekomendasi mampu memberikan **hasil yang relevan dan sesuai preferensi pengguna**, dibuktikan dengan precision 100% pada ekstraksi fitur dengan CountVectorizer. Hal ini berdampak positif terhadap pemahaman masalah bisnis karena:
+Evaluasi menunjukkan bahwa sistem rekomendasi mampu memberikan **hasil yang relevan dan sesuai preferensi pengguna**, dibuktikan dengan precision 100% pada kedua metode ekstraksi fitur. Hal ini berdampak positif terhadap pemahaman masalah bisnis karena:
 
 * **Meningkatkan kepuasan pengguna**, dengan memberikan rekomendasi tontonan yang sesuai selera.
 * **Mengurangi beban eksplorasi manual**, karena sistem secara otomatis menyarankan tontonan yang relevan.
