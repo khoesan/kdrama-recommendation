@@ -67,7 +67,7 @@ Sebelum dilakukan preprocessing, data memiliki beberapa missing value yang perlu
 
 Data juga diperiksa terhadap duplikasi dan outlier:
 - **Data Duplikat:** Tidak ditemukan baris yang benar-benar duplikat, khususnya pada kolom Name.
-- **Outlier:** Karena sistem rekomendasi ini berbasis teks (genre dan sinopsis), deteksi outlier numerik tidak menjadi fokus utama. Namun, rating rata-rata diamati berada dalam rentang wajar.
+- **Outlier:** Karena sistem rekomendasi ini berbasis teks, deteksi outlier numerik tidak menjadi fokus utama. Namun, rating rata-rata diamati berada dalam rentang wajar.
 
 ---
 
